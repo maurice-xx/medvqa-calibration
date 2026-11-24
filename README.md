@@ -104,6 +104,10 @@ image never straddle the fit and test halves. Calibrators are fitted on the fit 
 }
 ```
 
+## License
+
+Released under the MIT License. See [LICENSE](LICENSE).
+
 ## Contact
 
 Zhuohui Liu, Long Zhao — Qilu University of Technology (Shandong Academy of Sciences).
