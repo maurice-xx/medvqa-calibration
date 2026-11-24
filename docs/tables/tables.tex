@@ -1,0 +1,106 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Data and protocol configuration.}
+\label{tab:config}
+\begin{tabular}{ll}
+\toprule
+Item & Setting \\
+\midrule
+SLAKE & test+validate，432 题 / 173 图（异常 171，器官 100，模态 61，位置 100） \\
+VQA-RAD & 150 题 / 116 图（yes-no 100，短开放 50） \\
+VQA-Med2019 & 250 题 / 250 图（plane 125，modality 125） \\
+划分 & 按图像 md5 奇偶拆 fit/test 半区；同图多题不跨半区 \\
+生成格式 A & 直接短答（short answer only） \\
+生成格式 B & 一句观察 + Answer: <answer> \\
+生成格式 C & 短答 + Confidence: 0-100 \\
+控制格式 A′ & 仅 Answer: <answer> 标签（无观察、无自报） \\
+评分上下文 & 中性指令 + 前缀：空 / Observation: <中性句> + Answer: / Answer: \\
+模型 & Qwen3-VL-8B-Instruct、HealthGPT-Pro-8B、Gemma-4-E4B-it \\
+解码 & greedy，max_new_tokens=128，max_pixels=448²，离线加载 \\
+置信度 & 答案 span 的 token 几何均值（主）；首 token（辅）；自报（仅 C） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Main results on SLAKE (432 questions).}
+\label{tab:main}
+\begin{tabular}{llccccc}
+\toprule
+Model & Fmt & Acc & Conf & ECE & Brier & AUROC \\
+\midrule
+Qwen3-VL-8B & A & 0.521 & 0.783 & 0.263 & 0.301 & 0.315 \\
+Qwen3-VL-8B & B & 0.472 & 0.949 & 0.477 & 0.470 & 0.328 \\
+Qwen3-VL-8B & C & 0.521 & 0.957 & 0.436 & 0.412 & 0.182 \\
+HealthGPT-Pro-8B & A & 0.755 & 0.729 & 0.052 & 0.140 & 0.176 \\
+HealthGPT-Pro-8B & B & 0.447 & 0.791 & 0.350 & 0.365 & 0.407 \\
+HealthGPT-Pro-8B & C & 0.660 & 0.772 & 0.128 & 0.185 & 0.167 \\
+Gemma-4-E4B & A & 0.498 & 0.853 & 0.357 & 0.359 & 0.361 \\
+Gemma-4-E4B & B & 0.498 & 0.884 & 0.386 & 0.388 & 0.344 \\
+Gemma-4-E4B & C & 0.488 & 0.875 & 0.387 & 0.383 & 0.371 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Generation vs. scoring decomposition.}
+\label{tab:decomp}
+\begin{tabular}{lllll}
+\toprule
+Model & Scoring & Generation & ECE diag & ECE canon \\
+\midrule
+Qwen3-VL-8B & 0.210 [0.188, 0.232] & 0.198 [0.170, 0.228] & 0.385 / 0.147 / 0.169 & 0.385 / 0.249 / 0.270 \\
+HealthGPT-Pro-8B & 0.228 [0.217, 0.241] & 0.262 [0.241, 0.282] & 0.089 / 0.061 / 0.113 & 0.089 / 0.160 / 0.103 \\
+Gemma-4-E4B & 0.017 [0.014, 0.021] & 0.037 [0.029, 0.044] & 0.493 / 0.469 / 0.467 & 0.493 / 0.490 / 0.486 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Threshold transfer at 5% risk.}
+\label{tab:transfer}
+\begin{tabular}{lllll}
+\toprule
+Model & theta & A cov/risk & B cov/risk & C cov/risk \\
+\midrule
+Qwen3-VL-8B & 0.998 & 0.079 / 0.029 & 0.356 / 0.325 [0.264, 0.471] & 0.382 / 0.206 [0.142, 0.306] \\
+HealthGPT-Pro-8B & 0.751 & 0.491 / 0.047 & 0.637 / 0.538 [0.456, 0.606] & 0.655 / 0.159 [0.099, 0.204] \\
+Gemma-4-E4B & — & 不可达 & 不可达 & 不可达 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Calibration fixes (per-format test ECE).}
+\label{tab:fix}
+\begin{tabular}{lllll}
+\toprule
+Model & Strategy & A & B & C \\
+\midrule
+Qwen3-VL-8B & uncalibrated & 0.274 & 0.488 & 0.436 \\
+ & global & 0.139 & 0.100 & 0.120 \\
+ & cond_intercept & 0.100 & 0.068 & 0.084 \\
+ & cond_full & 0.091 & 0.117 & 0.051 \\
+ & independent & 0.091 & 0.117 & 0.052 \\
+HealthGPT-Pro-8B & uncalibrated & 0.057 & 0.361 & 0.135 \\
+ & global & 0.122 & 0.268 & 0.105 \\
+ & cond_intercept & 0.099 & 0.182 & 0.103 \\
+ & cond_full & 0.097 & 0.147 & 0.093 \\
+ & independent & 0.097 & 0.147 & 0.093 \\
+Gemma-4-E4B & uncalibrated & 0.364 & 0.401 & 0.383 \\
+ & global & 0.093 & 0.079 & 0.126 \\
+ & cond_intercept & 0.105 & 0.093 & 0.137 \\
+ & cond_full & 0.099 & 0.094 & 0.087 \\
+ & independent & 0.099 & 0.094 & 0.087 \\
+\bottomrule
+\end{tabular}
+\end{table}

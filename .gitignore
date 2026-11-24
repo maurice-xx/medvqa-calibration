@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Datasets, model weights, scratch dirs
+assets/
+data/*.zip
+results/raw*/
+results/tmp/
+
+# Logs and local state
+logs/
+*.log
+nohup.out
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
