@@ -98,7 +98,7 @@ image never straddle the fit and test halves. Calibrators are fitted on the fit 
 ```bibtex
 @inproceedings{liu2026formatbound,
   title     = {Format-Bound Calibration: Answer Format and Scoring Context in Medical VQA},
-  author    = {Liu, Zhuohui and Zhao, Long},
+  author    = {Liu, Zhuohui},
   booktitle = {Proceedings of the International Conference on Computer Supported Cooperative Work in Design (CSCWD)},
   year      = {2026}
 }
@@ -110,5 +110,4 @@ Released under the MIT License. See [LICENSE](LICENSE).
 
 ## Contact
 
-Zhuohui Liu, Long Zhao — Qilu University of Technology (Shandong Academy of Sciences).
-Correspondence: zhaolong@qlu.edu.cn
+Zhuohui Liu — Qilu University of Technology (Shandong Academy of Sciences).
